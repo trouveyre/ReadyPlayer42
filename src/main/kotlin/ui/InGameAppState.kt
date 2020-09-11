@@ -13,20 +13,29 @@ import com.jme3.scene.Geometry
 import com.jme3.scene.Spatial
 import com.jme3.scene.shape.Box
 import com.jme3.scene.shape.Sphere
+import controler.LivingLocalPlayer
 import controler.LocalPlayer
 import controler.Player
-import model.map.Map
+import model.Game
 import ui.ShortcutsListener.Companion.ACTION_NAME_CROUCH
 import ui.ShortcutsListener.Companion.ACTION_NAME_JUMP
 import ui.ShortcutsListener.Companion.ACTION_NAME_RUN_LEFT
 import ui.ShortcutsListener.Companion.ACTION_NAME_RUN_RIGHT
 
-class InGameAppState(
-    private val map: Map,
-    vararg players: Player
-) : BaseAppState() {
+class InGameAppState(val game: Game) : BaseAppState() {
 
-    private val players: MutableMap<Player, Spatial> = players.associate { it to Geometry() }.toMutableMap()
+    private val players: Map<Player, Spatial> by lazy {
+        game.players.associateWith {
+            Geometry().apply {
+                name = it.javaClass.simpleName
+                mesh = Sphere(32, 32, 2f, true, false)
+                material = Material(application.assetManager, "Common/MatDefs/Misc/Unshaded.j3md").apply {
+                    setColor("Color", ColorRGBA.Red)
+                }
+                localTranslation = Vector3f(it.character.x.toFloat(), it.character.y.toFloat(), Z)
+            }
+        }
+    }
     private val listeners: MutableList<InputListener> = mutableListOf()
 
     override fun initialize(app: Application) {
@@ -60,32 +69,24 @@ class InGameAppState(
     }
 
     private fun initFloors(app: SimpleApplication) {
-        val chunk = map.nextChunk()
-        chunk.platforms.forEach {
+        game.platforms.forEach {
             app.rootNode.attachChild(Geometry().apply {
                 name = "floor(${it.x}, ${it.y})"
-                mesh = Box(it.width, it.height, FLOOR_DEPTH)
-                material = Material(app.assetManager, "Common/MatDefs/Misc/Unshaded.j3md").also {
-                    it.setColor("Color", ColorRGBA.Brown)
+                mesh = Box(it.width.toFloat(), it.height.toFloat(), FLOOR_DEPTH)
+                material = Material(app.assetManager, "Common/MatDefs/Misc/Unshaded.j3md").apply {
+                    setColor("Color", ColorRGBA.Brown)
                 }
-                localTranslation = Vector3f(it.x, it.y, Z)
+                localTranslation = Vector3f(it.x.toFloat(), it.y.toFloat(), Z)
             })
         }
     }
 
     private fun initPlayers(app: SimpleApplication) {
-        players.keys.forEach { player ->
-            players[player] = Geometry().apply {
-                name = player.javaClass.simpleName
-                mesh = Sphere(32, 32, 2f, true, false)
-                material = Material(application.assetManager, "Common/MatDefs/Misc/Unshaded.j3md").also {
-                    it.setColor("Color", ColorRGBA.Red)
-                }
-                localTranslation = Vector3f(player.characterX, player.characterY, Z)
-                app.rootNode.attachChild(this)
-            }
+        players.forEach {
+            app.rootNode.attachChild(it.value)
 
-            if (player is LocalPlayer) {
+            val player = it.key
+            if (player is LivingLocalPlayer) {
                 val shortcuts = ShortcutsListener(player)
                 listeners.add(shortcuts)
                 app.inputManager.apply {
@@ -106,9 +107,13 @@ class InGameAppState(
     }
 
     override fun update(tpf: Float) {
+        game.update(tpf.toDouble())
         players.forEach {
-            it.key.react(tpf, true)
-            it.value.localTranslation = Vector3f(it.key.characterX, it.key.characterY, Z)
+            val player = it.key
+            if (player is LocalPlayer) {
+                player.react(tpf.toDouble())
+            }
+            it.value.localTranslation = Vector3f(it.key.character.x.toFloat(), it.key.character.y.toFloat(), Z)
         }
     }
 

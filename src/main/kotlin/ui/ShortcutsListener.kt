@@ -1,12 +1,12 @@
 package ui
 
 import com.jme3.input.controls.ActionListener
-import controler.LocalPlayer
+import controler.LivingLocalPlayer
 import model.character.Move
 import model.character.Orientation
 
 
-class ShortcutsListener(private val player: LocalPlayer) : ActionListener {
+class ShortcutsListener(private val player: LivingLocalPlayer) : ActionListener {
     override fun onAction(name: String, isPressed: Boolean, tpf: Float) {
         when (name) {
             ACTION_NAME_RUN_RIGHT -> {
@@ -22,7 +22,8 @@ class ShortcutsListener(private val player: LocalPlayer) : ActionListener {
                     player.makeCharacter(Move.None)
             }
             ACTION_NAME_JUMP -> {
-                player.makeCharacter(Move.Jump)
+                if (isPressed)
+                    player.makeCharacter(Move.Jump)
             }
             ACTION_NAME_CROUCH -> {
                 if (isPressed)

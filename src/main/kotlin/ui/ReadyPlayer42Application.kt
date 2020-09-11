@@ -1,23 +1,20 @@
 package ui
 
 import com.jme3.app.SimpleApplication
-import controler.LocalPlayer
-import model.character.Character
+import controler.LivingLocalPlayer
+import model.Game
+import model.character.MutableCharacter
 
 import model.map.DemoMap
 
 
 class ReadyPlayer42Application : SimpleApplication(
-    InGameAppState(DemoMap(), LocalPlayer(Character(0f, 5f)))
+    InGameAppState(Game(DemoMap(), setOf(
+        LivingLocalPlayer(MutableCharacter(0.0, 10.0))
+    )))
 ) {
 
-    override fun simpleInitApp() {
-
-    }
-
-    override fun simpleUpdate(tpf: Float) {
-
-    }
+    override fun simpleInitApp() {}
 }
 
 
