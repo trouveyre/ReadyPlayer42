@@ -1,6 +1,6 @@
 package model.rule
 
-import controler.Player
+import controler.player.Player
 import model.history.GameHistory
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime

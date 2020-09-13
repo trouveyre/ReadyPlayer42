@@ -1,6 +1,6 @@
 package model.history
 
-import controler.Player
+import controler.player.Player
 import model.rule.ScoreRule
 import model.map.Chunk
 import model.rule.CameraRule

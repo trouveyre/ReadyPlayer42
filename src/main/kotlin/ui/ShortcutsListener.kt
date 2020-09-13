@@ -1,7 +1,7 @@
 package ui
 
 import com.jme3.input.controls.ActionListener
-import controler.LivingLocalPlayer
+import controler.player.LivingLocalPlayer
 import model.character.Move
 import model.character.Orientation
 

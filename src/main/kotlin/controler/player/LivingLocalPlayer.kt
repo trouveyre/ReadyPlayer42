@@ -1,4 +1,4 @@
-package controler
+package controler.player
 
 import model.character.Move
 import model.character.Character

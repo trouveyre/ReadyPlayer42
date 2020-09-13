@@ -1,10 +1,11 @@
 package controler
 
+import controler.player.LocalPlayer
+import controler.player.Player
 import model.history.ChunkHistory
 import model.character.Character
 import model.history.GameHistory
 import model.history.History
-import model.map.Chunk
 import model.map.Map
 import model.map.Platform
 import model.rule.*

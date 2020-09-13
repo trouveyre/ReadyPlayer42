@@ -14,8 +14,8 @@ import com.jme3.scene.Geometry
 import com.jme3.scene.Spatial
 import com.jme3.scene.shape.Box
 import controler.Game
-import controler.LivingLocalPlayer
-import controler.Player
+import controler.player.LivingLocalPlayer
+import controler.player.Player
 import model.history.ChunkHistory
 import model.history.GameHistory
 import ui.ShortcutsListener.Companion.ACTION_NAME_CROUCH

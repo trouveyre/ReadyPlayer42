@@ -2,7 +2,7 @@ package ui
 
 import com.jme3.app.SimpleApplication
 import controler.Game
-import controler.LivingLocalPlayer
+import controler.player.LivingLocalPlayer
 import model.character.Character
 import model.map.ChunkCollection
 import model.map.RandomMap
