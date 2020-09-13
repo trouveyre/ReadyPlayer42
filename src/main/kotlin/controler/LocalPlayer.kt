@@ -1,17 +1,15 @@
 package controler
 
 import model.character.Character
-import model.character.MutableCharacter
 
 
-abstract class LocalPlayer(protected val _character: MutableCharacter) : Player {
+abstract class LocalPlayer(override val name: String, protected val _character: Character) : Player {
 
     override val character: Character
         get() = _character
 
 
     fun react(secondPerFrame: Double) {
-        _character.angularVelocity = 0.0
         onReact()
         if (_character.isRunningRight)
             _character.x += _character.speed * secondPerFrame

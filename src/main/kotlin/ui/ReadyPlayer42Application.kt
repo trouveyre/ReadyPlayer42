@@ -1,17 +1,21 @@
 package ui
 
 import com.jme3.app.SimpleApplication
+import controler.Game
 import controler.LivingLocalPlayer
-import model.Game
-import model.character.MutableCharacter
-
-import model.map.DemoMap
+import model.character.Character
+import model.map.ChunkCollection
+import model.map.RandomMap
+import model.rule.FirstScoreWinRule
 
 
 class ReadyPlayer42Application : SimpleApplication(
-    InGameAppState(Game(DemoMap(), setOf(
-        LivingLocalPlayer(MutableCharacter(0.0, 10.0))
-    )))
+        InGameAppState(Game(RandomMap(ChunkCollection.values().map { it.chunk }), setOf(
+                LivingLocalPlayer("p1", Character()),
+                LivingLocalPlayer("pp2", Character())
+        ),
+                winRule = FirstScoreWinRule(20)
+        ))
 ) {
 
     override fun simpleInitApp() {}

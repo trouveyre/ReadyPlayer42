@@ -8,7 +8,7 @@ import model.character.Orientation
 
 class ShortcutsListener(private val player: LivingLocalPlayer) : ActionListener {
     override fun onAction(name: String, isPressed: Boolean, tpf: Float) {
-        when (name) {
+        when (name.dropLast(1)) {
             ACTION_NAME_RUN_RIGHT -> {
                 if (isPressed)
                     player.makeCharacter(Move.Run, Orientation.Right)

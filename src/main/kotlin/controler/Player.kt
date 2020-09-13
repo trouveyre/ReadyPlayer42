@@ -1,9 +1,10 @@
 package controler
 
-import model.character.Character
+import model.character.CharacterData
 
 
 interface Player {
 
-    val character: Character
+    val name: String
+    val character: CharacterData
 }
