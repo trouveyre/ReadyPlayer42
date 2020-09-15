@@ -27,10 +27,17 @@ class MenuView : View() {
         BufferedReader(InputStreamReader(URL("http://bot.whatismyipaddress.com").openStream())).readLine().trim()
     }
     private val pseudoProvider = TextField(PlayerData.ManufacturedNames.random())
-    private val hostSelector = ToggleButton("host the game")
-    private val addressProvider = TextField().apply {
-        editableProperty().bind(hostSelector.selectedProperty().not())
-        textProperty().bind(hostSelector.selectedProperty().stringBinding { if (it == true) publicIp else "" })
+    private val hostSelector: ToggleButton by lazy {
+        ToggleButton("host the game").apply {
+            action {
+                addressProvider.text = if (isSelected) publicIp else ""
+            }
+        }
+    }
+    private val addressProvider: TextField by lazy {
+        TextField().apply {
+            editableProperty().bind(hostSelector.selectedProperty().not())
+        }
     }
 
     override val root = hbox {
