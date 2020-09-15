@@ -4,6 +4,7 @@ import com.jme3.app.SimpleApplication
 import core.character.Character
 import core.game.Game
 import core.game.LocalGame
+import core.map.Chunk
 import core.map.ChunkCollection
 import core.map.RandomMap
 import core.player.LocalPlayer
@@ -23,10 +24,10 @@ class ReadyPlayer42Game(game: Game) : SimpleApplication(InGameAppState(game)) {
 }
 
 
-fun main() {
+fun main(vararg args: String) {
 
     ReadyPlayer42Game(LocalGame(
-        RandomMap(ChunkCollection.values().map { it.chunk }),
+        RandomMap(setOf(Chunk.load(args[0]))),
         setOf(
             LocalPlayer(PlayerData.ManufacturedNames.random(), Character()),
             LocalPlayer(PlayerData.ManufacturedNames.random(), Character())

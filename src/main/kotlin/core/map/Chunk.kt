@@ -27,12 +27,13 @@ data class Chunk(
             var cameraStart = 20.0
             val reader = File(file).bufferedReader()
             var line = reader.readLine()
-            var numberOfLines = 0
+            var numberOfLines = 20
             var cursorX = 0
             var char: Char?
             var platformStart: Int? = null
             while (line != null) {
-                numberOfLines++
+                println(line)
+                numberOfLines--
                 char = line.getOrNull(cursorX)
                 while (char != null) {
                     when (char) {
@@ -46,19 +47,29 @@ data class Chunk(
                             if (platformStart == null)
                                 platformStart = cursorX
                         }
-                        else -> {
-                            if (platformStart != null) {
-                                platforms.add(StaticPlatform(
-                                    (platformStart + cursorX / 2.0) * UNIT_PER_CHARACTER,
-                                    numberOfLines * UNIT_PER_CHARACTER,
-                                    (cursorX - platformStart) * UNIT_PER_CHARACTER
-                                ))
-                                platformStart = null
-                            }
+                        else -> {}
+                    }
+                    if (char != FILE_SYMBOL_PLATFORM) {
+                        if (platformStart != null) {
+                            platforms.add(StaticPlatform(
+                                (platformStart + cursorX / 2.0) * UNIT_PER_CHARACTER,
+                                numberOfLines * UNIT_PER_CHARACTER,
+                                (cursorX - platformStart) * UNIT_PER_CHARACTER
+                            ))
+                            platformStart = null
                         }
                     }
                     cursorX++
                     char = line.getOrNull(cursorX)
+                }
+                if (platformStart != null) {
+                    println("$cursorX:$platformStart")
+                    platforms.add(StaticPlatform(
+                        (platformStart + cursorX / 2.0) * UNIT_PER_CHARACTER,
+                        numberOfLines * UNIT_PER_CHARACTER,
+                        (cursorX - platformStart) * UNIT_PER_CHARACTER
+                    ))
+                    platformStart = null
                 }
                 cursorX = 0
                 line = reader.readLine()
