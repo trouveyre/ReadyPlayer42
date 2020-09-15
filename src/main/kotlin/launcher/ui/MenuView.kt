@@ -96,10 +96,9 @@ class MenuView : View() {
                     FirstScoreWinRule(150)
                 )
                 find<FrameView>().apply {
-                    root.center = find<InGameView>().root
                     tip = "What a game !"
+                    root.center = InGameView(game).root //TODO
                 }
-                play(game)
             }
         }
     }
