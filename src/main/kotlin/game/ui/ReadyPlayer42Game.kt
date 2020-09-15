@@ -27,11 +27,11 @@ class ReadyPlayer42Game(game: Game) : SimpleApplication(InGameAppState(game)) {
 fun main(vararg args: String) {
 
     ReadyPlayer42Game(LocalGame(
-        RandomMap(setOf(Chunk.load(args[0]))),
+        RandomMap(setOf(Chunk.load(args[0]), ChunkCollection.OnePlatformChunk.chunk)),
         setOf(
             LocalPlayer(PlayerData.ManufacturedNames.random(), Character()),
             LocalPlayer(PlayerData.ManufacturedNames.random(), Character())
         ),
-        FirstScoreWinRule(150)
+        FirstScoreWinRule(args[1].toInt())
     )).start()
 }

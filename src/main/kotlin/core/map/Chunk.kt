@@ -63,7 +63,6 @@ data class Chunk(
                     char = line.getOrNull(cursorX)
                 }
                 if (platformStart != null) {
-                    println("$cursorX:$platformStart")
                     platforms.add(StaticPlatform(
                         (platformStart + cursorX / 2.0) * UNIT_PER_CHARACTER,
                         numberOfLines * UNIT_PER_CHARACTER,
