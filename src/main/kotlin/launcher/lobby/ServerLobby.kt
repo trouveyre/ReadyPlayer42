@@ -65,27 +65,27 @@ object ServerLobby : Lobby {
             observer?.onPlayerChange(players)
             socket = ServerSocket(PORT)
             thread(true) {
-                while (isOpened) {
-                    try {
-                        val client = socket?.accept()
+                socket?.use { server ->
+                    while (isOpened) {
+                        val client = server.accept()
                         if (client != null) {
                             thread(true) {
-                                client.getOutputStream().apply {
-                                    write(LobbyMessage.RequireName.name.toByteArray())
-                                    flush()
+                                client.use {
+                                    it.getOutputStream().apply {
+                                        write(LobbyMessage.RequireName.name.toByteArray())
+                                        flush()
+                                    }
+                                    val input = it.getInputStream()
+                                    val buffer = ByteArray(LobbyMessage.SIZE_MAX)
+                                    var bufferSize = input.read(buffer)
+                                    while (isOpened) {
+                                        treat(String(buffer, 0, bufferSize), it)
+                                        bufferSize = input.read(buffer)
+                                    }
                                 }
-                                val input = client.getInputStream()
-                                val buffer = ByteArray(LobbyMessage.SIZE_MAX)
-                                var bufferSize = input.read(buffer)
-                                while (isOpened) {
-                                    treat(String(buffer, 0, bufferSize), client)
-                                    bufferSize = input.read(buffer)
-                                }
-                                client.close()
                             }
                         }
                     }
-                    catch (exception: Exception) {}
                 }
             }
         }

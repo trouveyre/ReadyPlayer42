@@ -24,6 +24,7 @@ import game.ui.ShortcutsListener.Companion.ACTION_NAME_CROUCH
 import game.ui.ShortcutsListener.Companion.ACTION_NAME_JUMP
 import game.ui.ShortcutsListener.Companion.ACTION_NAME_RUN_LEFT
 import game.ui.ShortcutsListener.Companion.ACTION_NAME_RUN_RIGHT
+import launcher.lobby.ServerLobby
 
 
 class InGameAppState(val game: Game) : BaseAppState() {

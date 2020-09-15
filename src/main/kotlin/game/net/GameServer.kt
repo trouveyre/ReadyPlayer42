@@ -50,17 +50,18 @@ object GameServer {
     fun start() {
         if (mapping.isNotEmpty()) {
             thread(true) {
-                _isRunning = true
-                val buffer = ByteArray(BUFFER_SIZE)
-                lateinit var packet: DatagramPacket
-                lateinit var orders: Pair<Move, Orientation>
-                while (mapping.isNotEmpty()) {
-                    packet = DatagramPacket(buffer, buffer.size)
-                    socket.receive(packet)
-                    orders = decode(String(packet.data, packet.offset, packet.length))
-                    mapping[buildKey(packet.address.hostAddress)]?.order(orders.first, orders.second)
+                _socket?.use {
+                    _isRunning = true
+                    val buffer = ByteArray(BUFFER_SIZE)
+                    lateinit var packet: DatagramPacket
+                    lateinit var orders: Pair<Move, Orientation>
+                    while (mapping.isNotEmpty()) {
+                        packet = DatagramPacket(buffer, buffer.size)
+                        it.receive(packet)
+                        orders = decode(String(packet.data, packet.offset, packet.length))
+                        mapping[buildKey(packet.address.hostAddress)]?.order(orders.first, orders.second)
+                    }
                 }
-                _socket?.close()
                 _isRunning = false
             }
         }
