@@ -10,7 +10,7 @@ import tornadofx.launch
 class ReadyPlayer42Launcher: App(FrameView::class) {
 
     override fun stop() {
-        ClientLobby.quit()
+        ClientLobby.leave()
         ServerLobby.close()
         super.stop()
     }

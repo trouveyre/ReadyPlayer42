@@ -11,7 +11,7 @@ fun playFullscreen(game: Game) {
     val app = ReadyPlayer42Game(game).apply {
         isShowSettings = false
         setSettings(AppSettings(true).apply {
-            isFullscreen = true
+            isFullscreen = false
             val size = Toolkit.getDefaultToolkit().screenSize
             width = size.width
             height = size.height

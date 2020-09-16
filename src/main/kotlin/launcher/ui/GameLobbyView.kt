@@ -5,10 +5,12 @@ import core.map.ChunkCollection
 import core.map.RandomMap
 import core.player.PlayerData
 import core.rule.FirstScoreWinRule
+import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.control.TableView
 import launcher.lobby.Lobby
 import launcher.lobby.LobbyObserver
+import launcher.lobby.ServerLobby
 import tornadofx.*
 
 
@@ -30,14 +32,11 @@ class GameLobbyView(val lobby: Lobby) : View(), LobbyObserver {
         }
         bottom = hbox {
             alignment = Pos.CENTER
-            button("PLAY") {
-                action {
-                    val game = LocalGame(
-                            RandomMap(ChunkCollection.values().map { it.chunk }),
-                            lobby.leave(),
-                            FirstScoreWinRule(150)
-                    )
-                    find<FrameView>().content = InGameView(game).root
+            if (lobby is ServerLobby) {
+                button("PLAY") {
+                    action {
+                        lobby.launchGame()
+                    }
                 }
             }
         }
@@ -51,5 +50,12 @@ class GameLobbyView(val lobby: Lobby) : View(), LobbyObserver {
 
     override fun onPlayerChange(players: Set<PlayerData>) {
         playersView.items.setAll(players)
+    }
+
+    override fun onLaunch(players: Set<PlayerData>) {
+        val game = LocalGame(RandomMap(ChunkCollection.values().map { it.chunk }), players)
+        Platform.runLater {
+            find<FrameView>().content = InGameView(game).root
+        }
     }
 }

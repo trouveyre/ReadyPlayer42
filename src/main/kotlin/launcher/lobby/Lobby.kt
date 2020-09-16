@@ -7,6 +7,4 @@ interface Lobby {
     val players: Set<PlayerData>
 
     var observer: LobbyObserver?
-
-    fun leave(): Set<PlayerData>
 }

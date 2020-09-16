@@ -12,31 +12,33 @@ interface PlayerData {
 
     companion object {
         val ManufacturedNames = setOf(
-            "OnePlayerReady",
-            "xXDarkBlueXx",
-            "John",
-            "OSS OS",
-            "RedDragon",
-            "ll1ll111l1l",
-            "ProfessorY",
-            "MadMan",
-            "Kiriko",
-            "Nathalie",
-            "MyName"
+                "OnePlayerReady",
+                "xXDarkBlueXx",
+                "John",
+                "OSS OS",
+                "RedDragon",
+                "ll1ll111l1l",
+                "ProfessorY",
+                "MadMan",
+                "Kiriko",
+                "Nathalie",
+                "MyName",
+                "Sasukeke",
+                "Fatman"
         )
         val ManufacturedColors = setOf(
-            "#cc0000",
-            "#009933",
-            "#003366",
-            "#660066",
-            "#ff6600",
-            "#800000",
-            "#663300",
-            "#cc66ff",
-            "#00ffff",
-            "#ccff99",
-            "#669999",
-            "#666699"
+                "#cc0000",
+                "#009933",
+                "#003366",
+                "#660066",
+                "#ff6600",
+                "#800000",
+                "#663300",
+                "#cc66ff",
+                "#00ffff",
+                "#ccff99",
+                "#669999",
+                "#666699"
         )
     }
 }

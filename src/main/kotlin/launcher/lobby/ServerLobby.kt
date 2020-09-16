@@ -109,10 +109,20 @@ object ServerLobby : Lobby {
             socket?.close()
         _remotes.clear()
         _locals.clear()
+        observer?.onPlayerChange(players)
+        observer = null
         return result
     }
 
-    override fun leave(): Set<PlayerData> {
-        return close()
+    fun launchGame() {
+        if (isOpened) {
+            _remotes.keys.forEach {
+                it.getOutputStream().apply {
+                    write(LobbyMessage.LaunchGame.name.toByteArray())
+                    flush()
+                }
+            }
+            close()
+        }
     }
 }

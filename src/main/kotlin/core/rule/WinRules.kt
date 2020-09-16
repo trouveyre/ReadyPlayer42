@@ -18,6 +18,6 @@ class FirstScoreWinRule(val winningScore: Int = WINNING_SCORE_DEFAULT_VALUE) : W
 
 
     companion object {
-        const val WINNING_SCORE_DEFAULT_VALUE: Int = 1000
+        const val WINNING_SCORE_DEFAULT_VALUE: Int = 150
     }
 }

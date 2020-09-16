@@ -95,8 +95,7 @@ class MenuView : View() {
                     setOf(
                         LocalPlayer(PlayerData.ManufacturedNames.random(), Character()),
                         LocalPlayer(PlayerData.ManufacturedNames.random(), Character())
-                    ),
-                    FirstScoreWinRule(250)
+                    )
                 )
                 find<FrameView>().content = InGameView(game).root
             }

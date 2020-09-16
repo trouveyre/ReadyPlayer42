@@ -66,7 +66,12 @@ object ClientLobby : Lobby {
                                         }
                                     }
                                 }
-                                LobbyMessage.LaunchGame -> {}   //TODO
+                                LobbyMessage.LaunchGame -> {
+                                    val obs = observer
+                                    val players = players
+                                    leave()
+                                    obs?.onLaunch(players)
+                                }
                             }
                             bufferSize = input.read(buffer)
                         }
@@ -76,15 +81,13 @@ object ClientLobby : Lobby {
         }
     }
 
-    fun quit(): Set<PlayerData> {
+    fun leave(): Set<PlayerData> {
         val result = players
         if (isJoined)
             socket?.close()
         _players.clear()
+        observer?.onPlayerChange(players)
+        observer = null
         return result
-    }
-
-    override fun leave(): Set<PlayerData> {
-        return quit()
     }
 }
