@@ -32,15 +32,12 @@ class GameLobbyView(val lobby: Lobby) : View(), LobbyObserver {
             alignment = Pos.CENTER
             button("PLAY") {
                 action {
-                    find<FrameView>().apply {
-                        val game = LocalGame(
+                    val game = LocalGame(
                             RandomMap(ChunkCollection.values().map { it.chunk }),
                             lobby.leave(),
                             FirstScoreWinRule(150)
-                        )
-                        tip = "What a game !"
-                        root.center = InGameView(game).root //TODO
-                    }
+                    )
+                    find<FrameView>().content = InGameView(game).root
                 }
             }
         }

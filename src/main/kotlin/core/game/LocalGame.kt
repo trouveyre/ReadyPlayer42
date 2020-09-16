@@ -11,7 +11,6 @@ import core.player.PlayerData
 import core.rule.*
 import org.dyn4j.dynamics.BodyFixture
 import org.dyn4j.dynamics.PhysicsBody
-import org.dyn4j.geometry.Vector2
 import org.dyn4j.world.BroadphaseCollisionData
 import org.dyn4j.world.ManifoldCollisionData
 import org.dyn4j.world.NarrowphaseCollisionData
@@ -98,11 +97,17 @@ class LocalGame(
         chronicle.playersDead.forEach { world.removeBody(it.character as PhysicsBody) }
         val winner = history.winRule(this)
         return when {
-            winner != null -> history.apply { end(winner, scores) }
-            chronicle.playersRemaining.isEmpty() -> history.apply { end(null, scores) }
-            chronicle.isEnded -> {
-                val story = chronicle
+            winner != null -> history.apply {
                 world.removeAllBodies()
+                end(winner, scores)
+            }
+            chronicle.playersRemaining.isEmpty() -> history.apply {
+                world.removeAllBodies()
+                end(null, scores)
+            }
+            chronicle.isEnded -> {
+                world.removeAllBodies()
+                val story = chronicle
                 val value = map.nextChunk()
                 history.newChronicle(ChunkHistory(value, chronicle.playersRemaining))
                 _cameraX = value.cameraStart
@@ -111,5 +116,9 @@ class LocalGame(
             }
             else -> null
         }
+    }
+
+    override fun cleanUp() {
+        world.removeAllBodies()
     }
 }

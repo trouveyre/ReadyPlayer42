@@ -4,8 +4,10 @@ import core.game.Game
 import javafx.geometry.Pos
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
-import launcher.play
-import tornadofx.*
+import launcher.playFullscreen
+import tornadofx.View
+import tornadofx.label
+import tornadofx.vbox
 
 class InGameView(game: Game) : View() {
 
@@ -18,8 +20,8 @@ class InGameView(game: Game) : View() {
 
 
     init {
-        play(game)
-        find<FrameView>().root.center = find<MenuView>().root
+        playFullscreen(game)
+        find<FrameView>().tip = "What a game !"
     }
 
 

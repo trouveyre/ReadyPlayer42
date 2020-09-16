@@ -7,8 +7,8 @@ import game.ui.ReadyPlayer42Game
 import java.awt.Toolkit
 
 
-fun play(game: Game): GameHistory {
-    ReadyPlayer42Game(game).apply {
+fun playFullscreen(game: Game) {
+    val app = ReadyPlayer42Game(game).apply {
         isShowSettings = false
         setSettings(AppSettings(true).apply {
             isFullscreen = true
@@ -17,6 +17,6 @@ fun play(game: Game): GameHistory {
             height = size.height
             frequency = 75
         })
-    }.start()
-    return game.history
+    }
+    app.start()
 }

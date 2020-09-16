@@ -70,7 +70,7 @@ class MenuView : View() {
                     })
                     action {
                         find<FrameView>().apply {
-                            root.center = GameLobbyView(
+                            content = GameLobbyView(
                                 if (hostSelector.isSelected)
                                     ServerLobby.apply {
                                         open(LocalPlayer(pseudoProvider.text, Character()))
@@ -98,10 +98,7 @@ class MenuView : View() {
                     ),
                     FirstScoreWinRule(250)
                 )
-                find<FrameView>().apply {
-                    tip = "What a game !"
-                    root.center = InGameView(game).root //TODO
-                }
+                find<FrameView>().content = InGameView(game).root
             }
         }
     }

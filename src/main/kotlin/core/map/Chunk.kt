@@ -32,7 +32,6 @@ data class Chunk(
             var char: Char?
             var platformStart: Int? = null
             while (line != null) {
-                println(line)
                 numberOfLines--
                 char = line.getOrNull(cursorX)
                 while (char != null) {

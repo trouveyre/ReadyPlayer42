@@ -1,6 +1,7 @@
 package launcher.ui
 
 import javafx.geometry.Pos
+import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.stage.StageStyle
 import launcher.ReadyPlayer42Launcher
@@ -13,6 +14,12 @@ class FrameView : View(ReadyPlayer42Launcher.TITLE) {
         get() = _tip.text
         set(value) {
             _tip.text = value
+        }
+
+    var content: Node
+        get() = root.center
+        set(value) {
+            root.center = value
         }
 
     override val root = borderpane {

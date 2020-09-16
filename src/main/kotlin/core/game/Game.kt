@@ -16,6 +16,7 @@ interface Game {
     val scores: Map<PlayerData, Int>
 
     fun nextChronicle(elapsedTime: Double): History?
+    fun cleanUp()
 
 
     companion object {
