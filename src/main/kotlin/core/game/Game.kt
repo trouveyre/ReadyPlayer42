@@ -1,7 +1,7 @@
 package core.game
 
 import core.player.PlayerData
-import core.history.ChunkHistory
+import core.history.Chronicle
 import core.history.GameHistory
 import core.history.History
 import org.dyn4j.geometry.Vector2
@@ -10,7 +10,7 @@ import org.dyn4j.world.PhysicsWorld
 interface Game {
 
     val history: GameHistory
-    val chronicle: ChunkHistory
+    val chronicle: Chronicle
     val cameraX: Double
     val playersRunning: Set<PlayerData>
     val scores: Map<PlayerData, Int>

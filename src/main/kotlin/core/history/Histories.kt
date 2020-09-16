@@ -46,17 +46,22 @@ class GameHistory(
 
     val mapName: String = map::class.simpleName ?: "Unknown"
 
-    private val _chronicles: MutableList<ChunkHistory> = mutableListOf(ChunkHistory(map.nextChunk(), players))
-    val chronicles: List<ChunkHistory>
+    private val _chronicles: MutableList<Chronicle> = mutableListOf(Chronicle(map.nextChunk(), players))
+    val chronicles: List<Chronicle>
         get() = _chronicles
+
+    val playersDead: Set<PlayerData>
+        get() = players.filter { it in chronicles.fold(mutableSetOf<PlayerData>()) {
+                acc, history -> acc.apply { addAll(history.playersDead) }
+        } }.toSet()
 
     private var _winner: PlayerData? = null
     val winner: PlayerData?
         get() = _winner
 
-    private var _winningTime: Duration = Duration.ZERO
-    val winningTime: Duration
-        get() = _winningTime
+    private var _time: Duration = Duration.ZERO
+    val time: Duration
+        get() = _time
 
     private var _scores: Map<PlayerData, Int>? = null
     val scores: Map<PlayerData, Int>
@@ -66,7 +71,7 @@ class GameHistory(
         get() = _scores != null
 
 
-    fun newChronicle(chronicle: ChunkHistory) {
+    fun newChronicle(chronicle: Chronicle) {
         if (!isEnded && hasStarted)
             _chronicles.add(chronicle)
     }
@@ -75,7 +80,7 @@ class GameHistory(
         if (!isEnded && hasStarted) {
             val timeElapsed = startTime?.elapsedNow()
             if (timeElapsed != null)
-                _winningTime = timeElapsed
+                _time = timeElapsed
             _scores = scores
             _winner = winner
         }
@@ -88,7 +93,7 @@ class GameHistory(
 
 
 @OptIn(ExperimentalTime::class)
-class ChunkHistory(val chunk: Chunk, val players: Set<PlayerData>): History() {
+class Chronicle(val chunk: Chunk, val players: Set<PlayerData>): History() {
 
     private val _arrivals: MutableMap<PlayerData, Duration> = players.associateWith { Duration.INFINITE }.toMutableMap()
     val arrivals: Map<PlayerData, Duration>

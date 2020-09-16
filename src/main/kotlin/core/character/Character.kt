@@ -20,27 +20,18 @@ class Character : Body(), CharacterData {
             translate(0.0, value - worldCenter.y)
         }
 
-    override var action: Move = Move.None
+    private var wantToJump: Boolean = false
         set(value) {
-            when (value) {
-                Move.Run -> when (orientation) {
-                    Orientation.Right -> isRunningRight = true
-                    Orientation.Left -> isRunningLeft = true
-                }
-                Move.Jump -> if (canJump) {
-                    applyImpulse(Vector2(0.0, CharacterData.JUMP_STRENGTH_DEFAULT_VALUE))
-                    if (field == Move.Jump)
-                        canJump = false
-                }
-                Move.Crouch -> {}   // TODO
-                Move.None -> stopRunning()
-            }
+            if (value) applyImpulse(CharacterData.JUMP_DEFAULT_FORCE)
             field = value
         }
 
+    private var _action: Move = Move.None
+    override val action: Move
+        get() = _action
+
     override var orientation: Orientation = Orientation.Right
 
-    private var canJump: Boolean = true
     override var isRunningRight: Boolean = false
         set(value) {
             if (value)
@@ -55,28 +46,60 @@ class Character : Body(), CharacterData {
         }
 
     override var speed: Double = CharacterData.SPEED_DEFAULT_VALUE
+    override var jumpStrength: Double = 0.0
 
 
     init {
-        addFixture(Geometry.createRectangle(CharacterData.WIDTH, CharacterData.HEIGHT), CharacterData.DENSITY)
+        addFixture(
+            Geometry.createRectangle(CharacterData.WIDTH, CharacterData.HEIGHT),
+            CharacterData.DENSITY,
+            CharacterData.FRICTION,
+            CharacterData.RESTITUTION
+        )
         setMass(MassType.FIXED_ANGULAR_VELOCITY)
         isAtRestDetectionEnabled = false
     }
 
 
     fun nextPosition(elapsedTime: Double) {
-        if (isRunningRight)
-            x += speed * elapsedTime
-        if (isRunningLeft)
-            x -= speed * elapsedTime
-        if (action == Move.Jump)
+        linearVelocity.x = when {
+            isRunningRight -> speed
+            isRunningLeft -> -speed
+            else -> 0.0
+        }
+        if (action == Move.Jump) {
             speed -= CharacterData.SPEED_REDUCTION_VALUE * elapsedTime
+            if (wantToJump)
+                applyForce(CharacterData.JUMP_FALL_REDUCTION_FORCE)
+        }
+    }
+
+    fun newAction(move: Move, stopDoing: Boolean) {
+        when (move) {
+            Move.Run -> {
+                when (orientation) {
+                    Orientation.Right -> isRunningRight = !stopDoing
+                    Orientation.Left -> isRunningLeft = !stopDoing
+                }
+            }
+            Move.Jump -> {
+                if (stopDoing) {
+                    wantToJump = false
+                }
+                else if (action != Move.Jump) {
+                    wantToJump = true
+                }
+            }
+            Move.Crouch -> {}
+            Move.None -> stopRunning()
+        }
+        if (action != Move.Jump)
+            _action = move
     }
 
     fun land() {
+        _action = if (isRunningLeft || isRunningRight) Move.Run else Move.None
         speed = CharacterData.SPEED_DEFAULT_VALUE
-        canJump = true
-        action = if (isRunningLeft || isRunningRight) Move.Run else Move.None
     }
 
     private fun stopRunning() {

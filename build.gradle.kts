@@ -18,6 +18,7 @@ dependencies {
     implementation("org.jmonkeyengine", "jme3-core", jMonkeyEngineVersion)
     implementation("org.jmonkeyengine", "jme3-desktop", jMonkeyEngineVersion)
     implementation("org.jmonkeyengine", "jme3-lwjgl", jMonkeyEngineVersion)
+    implementation("org.jmonkeyengine", "jme3-plugins", jMonkeyEngineVersion)
     implementation("no.tornado", "tornadofx", tornadofxVersion)
 }
 

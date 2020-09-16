@@ -1,5 +1,6 @@
 package launcher.ui
 
+import com.jme3.input.KeyInput
 import core.character.Character
 import core.game.LocalGame
 import core.map.ChunkCollection
@@ -94,7 +95,8 @@ class MenuView : View() {
                     map,
                     setOf(
                         LocalPlayer(PlayerData.ManufacturedNames.random(), Character()),
-                        LocalPlayer(PlayerData.ManufacturedNames.random(), Character())
+                        LocalPlayer(PlayerData.ManufacturedNames.random(), Character(),
+                            KeyInput.KEY_RIGHT, KeyInput.KEY_LEFT, KeyInput.KEY_UP, KeyInput.KEY_DOWN)
                     )
                 )
                 find<FrameView>().content = InGameView(game).root

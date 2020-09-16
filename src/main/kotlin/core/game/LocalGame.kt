@@ -1,7 +1,7 @@
 package core.game
 
 import core.character.Character
-import core.history.ChunkHistory
+import core.history.Chronicle
 import core.history.GameHistory
 import core.history.History
 import core.map.Map
@@ -35,7 +35,7 @@ class LocalGame(
 
     override val history: GameHistory = GameHistory(map, players, winRule, deathRule, deathPenaltyRule, cameraRule, scoreRule)
 
-    override val chronicle: ChunkHistory
+    override val chronicle: Chronicle
         get() = history.chronicles.last()
 
     private var _cameraX: Double = chronicle.chunk.cameraStart
@@ -85,31 +85,31 @@ class LocalGame(
     }
 
     override fun nextChronicle(elapsedTime: Double): History? {
-        world.update(elapsedTime)
-        val oldX = _cameraX
-        _cameraX = history.cameraRule(history, _cameraX)
-        history.scoreRule(this, oldX, _scores)
         playersRunning.apply {
             filterIsInstance<Player>().forEach { it.react(elapsedTime) }
             filter { it.character.x > chronicle.chunk.length }.forEach { chronicle.newArrival(it) }
         }
+        world.update(elapsedTime)
+        val oldX = _cameraX
+        _cameraX = history.cameraRule(history, _cameraX)
+        history.scoreRule(this, oldX, _scores)
         history.deathRule(this).forEach { history.deathPenaltyRule(this, it) }
         chronicle.playersDead.forEach { world.removeBody(it.character as PhysicsBody) }
         val winner = history.winRule(this)
         return when {
             winner != null -> history.apply {
                 world.removeAllBodies()
-                end(winner, scores)
+                end(winner, _scores)
             }
             chronicle.playersRemaining.isEmpty() -> history.apply {
                 world.removeAllBodies()
-                end(null, scores)
+                end(null, _scores)
             }
             chronicle.isEnded -> {
                 world.removeAllBodies()
                 val story = chronicle
                 val value = map.nextChunk()
-                history.newChronicle(ChunkHistory(value, chronicle.playersRemaining))
+                history.newChronicle(Chronicle(value, chronicle.playersRemaining))
                 _cameraX = value.cameraStart
                 addBodies()
                 story

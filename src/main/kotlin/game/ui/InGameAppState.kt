@@ -4,9 +4,7 @@ import com.jme3.app.Application
 import com.jme3.app.SimpleApplication
 import com.jme3.app.state.BaseAppState
 import com.jme3.font.BitmapText
-import com.jme3.input.KeyInput
 import com.jme3.input.controls.InputListener
-import com.jme3.input.controls.KeyTrigger
 import com.jme3.material.Material
 import com.jme3.math.ColorRGBA
 import com.jme3.math.Vector3f
@@ -17,14 +15,9 @@ import core.character.CharacterData
 import core.game.Game
 import core.player.LocalPlayer
 import core.player.PlayerData
-import core.history.ChunkHistory
+import core.history.Chronicle
 import core.history.GameHistory
 import game.net.GameServer
-import game.ui.ShortcutsListener.Companion.ACTION_NAME_CROUCH
-import game.ui.ShortcutsListener.Companion.ACTION_NAME_JUMP
-import game.ui.ShortcutsListener.Companion.ACTION_NAME_RUN_LEFT
-import game.ui.ShortcutsListener.Companion.ACTION_NAME_RUN_RIGHT
-import launcher.lobby.ServerLobby
 
 
 class InGameAppState(val game: Game) : BaseAppState() {
@@ -97,67 +90,28 @@ class InGameAppState(val game: Game) : BaseAppState() {
 
     private fun initFloors() {
         game.chronicle.chunk.platforms.forEach {
-//            simpleApp.rootNode.attachChild(simpleApp.assetManager.loadModel("Models/satelite_getho_01.obj").apply {
+//            simpleApp.rootNode.attachChild(simpleApp.assetManager.loadModel("Models/satelite.obj").apply {
             simpleApp.rootNode.attachChild(Geometry().apply {
                 name = "floor(${it.x}, ${it.y})"
                 mesh = Box(it.width.toFloat(), it.height.toFloat(), FLOOR_DEPTH)
-//                setMaterial(Material(simpleApp.assetManager, "Common/MatDefs/Misc/Unshaded.j3md").apply {
                 setMaterial(Material(simpleApp.assetManager, "Common/MatDefs/Misc/Unshaded.j3md").apply {
 //                    setTexture("satelite_getho_01", simpleApp.assetManager.loadTexture("Textures/satelite_getho_01.png"))
                     setColor("Color", ColorRGBA.Brown)
                 })
-//                scale()
+//                scale(0.1f, 0.1f, 0.1f)
+//                scale(it.width.toFloat(), it.height.toFloat(), Z)
 //                rotate(0f, 90f, 0f)
                 localTranslation = Vector3f(it.x.toFloat(), it.y.toFloat(), Z)
             })
         }
     }
 
-    private var firstLLP: Boolean? = null       //TODO TEMP
     private fun initPlayers() {
         game.chronicle.playersRemaining.forEach {
             simpleApp.rootNode.attachChild(characters[it])
-
-            if (it is LocalPlayer) {
-                if (firstLLP == null) {
-                    firstLLP = true
-                    val shortcuts = ShortcutsListener(it)
-                    listeners.add(shortcuts)
-                    simpleApp.inputManager.apply {
-                        addMapping(ACTION_NAME_RUN_RIGHT + "1", KeyTrigger(KeyInput.KEY_D))
-                        addMapping(ACTION_NAME_RUN_LEFT + "1", KeyTrigger(KeyInput.KEY_Q))
-                        addMapping(ACTION_NAME_JUMP + "1", KeyTrigger(KeyInput.KEY_Z))
-                        addMapping(ACTION_NAME_CROUCH + "1", KeyTrigger(KeyInput.KEY_S))
-                        addListener(
-                                shortcuts,
-                                ACTION_NAME_RUN_RIGHT + "1",
-                                ACTION_NAME_RUN_LEFT + "1",
-                                ACTION_NAME_JUMP + "1",
-                                ACTION_NAME_CROUCH + "1"
-                        )
-                    }
-                }
-                else if (firstLLP == true) {
-                    firstLLP = false
-                    val shortcuts = ShortcutsListener(it)
-                    listeners.add(shortcuts)
-                    simpleApp.inputManager.apply {
-                        addMapping(ACTION_NAME_RUN_RIGHT + "2", KeyTrigger(KeyInput.KEY_RIGHT))
-                        addMapping(ACTION_NAME_RUN_LEFT + "2", KeyTrigger(KeyInput.KEY_LEFT))
-                        addMapping(ACTION_NAME_JUMP + "2", KeyTrigger(KeyInput.KEY_UP))
-                        addMapping(ACTION_NAME_CROUCH + "2", KeyTrigger(KeyInput.KEY_DOWN))
-                        addListener(
-                                shortcuts,
-                                ACTION_NAME_RUN_RIGHT + "2",
-                                ACTION_NAME_RUN_LEFT + "2",
-                                ACTION_NAME_JUMP + "2",
-                                ACTION_NAME_CROUCH + "2"
-                        )
-                    }
-                }
-            }
+            if (it is LocalPlayer)
+                listeners.add(ShortcutsListener(it, simpleApp))
         }
-        firstLLP = null
     }
 
     private fun initScores() {
@@ -168,7 +122,7 @@ class InGameAppState(val game: Game) : BaseAppState() {
 
     override fun update(tpf: Float) {
         when (val history = game.nextChronicle(tpf.toDouble())){
-            is ChunkHistory -> {
+            is Chronicle -> {
                 clearChunk()
                 initCamera()
                 initFloors()
@@ -176,7 +130,6 @@ class InGameAppState(val game: Game) : BaseAppState() {
                 game.chronicle.start()
             }
             is GameHistory -> {
-                println("${history.winner} has win !")  //TODO
                 application.stop()
             }
             null -> {
