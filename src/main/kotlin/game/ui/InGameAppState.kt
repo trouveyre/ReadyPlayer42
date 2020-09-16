@@ -138,6 +138,7 @@ class InGameAppState(val game: Game) : BaseAppState() {
                     }
                 }
                 else if (firstLLP == true) {
+                    firstLLP = false
                     val shortcuts = ShortcutsListener(it)
                     listeners.add(shortcuts)
                     simpleApp.inputManager.apply {

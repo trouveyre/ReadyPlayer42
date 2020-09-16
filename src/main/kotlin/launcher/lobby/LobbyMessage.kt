@@ -3,7 +3,9 @@ package launcher.lobby
 enum class LobbyMessage {
 
     RequireName,
-    PlayerAdded;
+    PlayerAdded,
+    LaunchGame;
+
 
     companion object {
         const val COMPONENTS_SEPARATOR: Char = ':'

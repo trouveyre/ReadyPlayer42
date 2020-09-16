@@ -12,13 +12,9 @@ import javafx.scene.control.TextField
 import javafx.scene.control.ToggleButton
 import launcher.lobby.ClientLobby
 import launcher.lobby.ServerLobby
-import launcher.play
 import tornadofx.*
 import java.io.BufferedReader
-import java.io.InputStream
 import java.io.InputStreamReader
-import java.net.DatagramSocket
-import java.net.InetAddress
 import java.net.URL
 
 class MenuView : View() {
@@ -91,7 +87,7 @@ class MenuView : View() {
             }
         }
         label(" or ")
-        button("PLAY AT 2 ON THE SAME KEYBORD") {
+        button("PLAY AT 2 ON THE SAME KEYBOARD") {
             action {
                 val map = RandomMap(ChunkCollection.values().map { it.chunk })
                 val game = LocalGame(
@@ -100,7 +96,7 @@ class MenuView : View() {
                         LocalPlayer(PlayerData.ManufacturedNames.random(), Character()),
                         LocalPlayer(PlayerData.ManufacturedNames.random(), Character())
                     ),
-                    FirstScoreWinRule(150)
+                    FirstScoreWinRule(250)
                 )
                 find<FrameView>().apply {
                     tip = "What a game !"

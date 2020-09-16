@@ -4,11 +4,12 @@ import core.player.LocalPlayer
 import core.player.PlayerData
 import core.player.RemotePlayer
 import java.net.Socket
+import kotlin.concurrent.thread
 
 
 object ClientLobby : Lobby {
 
-    private val _players: MutableSet<PlayerData> = mutableSetOf<PlayerData>()
+    private val _players: MutableSet<PlayerData> = mutableSetOf()
     override val players: Set<PlayerData>
         get() = _players
 
@@ -18,49 +19,57 @@ object ClientLobby : Lobby {
             field = value
         }
 
-    val hasJoined: Boolean
+    val isJoined: Boolean
         get() = socket?.isClosed == false
 
     override var observer: LobbyObserver? = null
         set(value) {
             field = value
-            field?.onPlayerChange(ServerLobby.players)
+            field?.onPlayerChange(players)
         }
 
 
     fun join(ipAddress: String, local: LocalPlayer) {
-        if (!hasJoined) {
+        if (!isJoined) {
             socket = Socket(ipAddress, ServerLobby.PORT)
-            socket?.use {
-                val input = it.getInputStream()
-                if (input != null) {
-                    val buffer = ByteArray(LobbyMessage.SIZE_MAX)
-                    var bufferSize = input.read(buffer)
-                    while (bufferSize != -1) {
-                        val components = String(buffer, 0, bufferSize).split(LobbyMessage.COMPONENTS_SEPARATOR)
-                        when (LobbyMessage.valueOf(components.first())) {
-                            LobbyMessage.RequireName -> {
-                                it.getOutputStream().apply {
-                                    val response = "${LobbyMessage.RequireName.name}${LobbyMessage.COMPONENTS_SEPARATOR}${local.name}"
-                                    write(response.toByteArray())
-                                    flush()
-                                }
-                            }
-                            LobbyMessage.PlayerAdded -> {
-                                val name = components.getOrNull(1)
-                                if (local.name == name) {
-                                    _players.add(local)
-                                    ServerLobby.observer?.onPlayerChange(ServerLobby.players)
-                                } else if (name != null) {
-                                    val address = components.getOrNull(2)
-                                    if (address != null) {
-                                        _players.add(RemotePlayer(name, address))
-                                        ServerLobby.observer?.onPlayerChange(ServerLobby.players)
+            thread(true) {
+                socket?.use {
+                    val input = it.getInputStream()
+                    if (input != null) {
+                        val buffer = ByteArray(LobbyMessage.SIZE_MAX)
+                        var bufferSize = input.read(buffer)
+                        while (isJoined) {
+                            val components = String(buffer, 0, bufferSize).split(LobbyMessage.COMPONENTS_SEPARATOR)
+                            when (LobbyMessage.valueOf(components.first())) {
+                                LobbyMessage.RequireName -> {
+                                    val name = components.getOrNull(1)
+                                    if (name != null) {
+                                        _players.add(RemotePlayer(name, it.inetAddress.hostAddress))
+                                        observer?.onPlayerChange(players)
+                                    }
+                                    it.getOutputStream().apply {
+                                        val response = "${LobbyMessage.RequireName.name}${LobbyMessage.COMPONENTS_SEPARATOR}${local.name}"
+                                        write(response.toByteArray())
+                                        flush()
                                     }
                                 }
+                                LobbyMessage.PlayerAdded -> {
+                                    val name = components.getOrNull(1)
+                                    if (local.name == name) {
+                                        _players.add(local)
+                                        observer?.onPlayerChange(players)
+                                    } else if (name != null) {
+                                        val address = components.getOrNull(2)
+                                        if (address != null) {
+                                            _players.add(RemotePlayer(name, address))
+                                            observer?.onPlayerChange(players)
+                                        }
+                                    }
+                                }
+                                LobbyMessage.LaunchGame -> {}   //TODO
                             }
+                            bufferSize = input.read(buffer)
                         }
-                        bufferSize = input.read(buffer)
                     }
                 }
             }
@@ -69,7 +78,7 @@ object ClientLobby : Lobby {
 
     fun quit(): Set<PlayerData> {
         val result = players
-        if (hasJoined)
+        if (isJoined)
             socket?.close()
         _players.clear()
         return result

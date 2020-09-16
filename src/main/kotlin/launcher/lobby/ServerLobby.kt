@@ -3,7 +3,6 @@ package launcher.lobby
 import core.player.LocalPlayer
 import core.player.PlayerData
 import core.player.RemotePlayer
-import game.ui.ReadyPlayer42Game
 import java.net.ServerSocket
 import java.net.Socket
 import kotlin.concurrent.thread
@@ -40,28 +39,40 @@ object ServerLobby : Lobby {
             LobbyMessage.RequireName -> {
                 val name = components.getOrNull(1)
                 if (name != null) {
-                    _remotes[socket] = RemotePlayer(name, socket.inetAddress.hostAddress)
-                    observer?.onPlayerChange(players)
                     socket.getOutputStream().apply {
-                        val response = """
-                            ${LobbyMessage.PlayerAdded.name}
-                            ${LobbyMessage.COMPONENTS_SEPARATOR}
-                            ${_remotes[socket]?.name}
-                            ${LobbyMessage.COMPONENTS_SEPARATOR}
-                            ${_remotes[socket]?.ipAddress}
-                            """.trimIndent()
-                        write(response.toByteArray())
-                        flush()
+                        _remotes.values.forEach {
+                            val response = LobbyMessage.PlayerAdded.name +
+                                    LobbyMessage.COMPONENTS_SEPARATOR +
+                                    it.name +
+                                    LobbyMessage.COMPONENTS_SEPARATOR +
+                                    it.ipAddress
+                            write(response.toByteArray())
+                            flush()
+                        }
                     }
+                    _remotes[socket] = RemotePlayer(name, socket.inetAddress.hostAddress)
+                    _remotes.keys.forEach {
+                        it.getOutputStream().apply {
+                            val response = LobbyMessage.PlayerAdded.name +
+                                    LobbyMessage.COMPONENTS_SEPARATOR +
+                                    _remotes[socket]?.name +
+                                    LobbyMessage.COMPONENTS_SEPARATOR +
+                                    _remotes[socket]?.ipAddress
+                            write(response.toByteArray())
+                            flush()
+                        }
+                    }
+                    observer?.onPlayerChange(players)
                 }
             }
             LobbyMessage.PlayerAdded -> {}
+            LobbyMessage.LaunchGame -> {}
         }
     }
 
-    fun open(vararg locals: LocalPlayer) {
+    fun open(local: LocalPlayer) {
         if (!isOpened) {
-            _locals.addAll(locals.take(ReadyPlayer42Game.LOCAL_PLAYERS_MAXIMUM_NUMBER))
+            _locals.add(local)
             observer?.onPlayerChange(players)
             socket = ServerSocket(PORT)
             thread(true) {
@@ -72,7 +83,8 @@ object ServerLobby : Lobby {
                             thread(true) {
                                 client.use {
                                     it.getOutputStream().apply {
-                                        write(LobbyMessage.RequireName.name.toByteArray())
+                                        val message = "${LobbyMessage.RequireName.name}${LobbyMessage.COMPONENTS_SEPARATOR}${local.name}"
+                                        write(message.toByteArray())
                                         flush()
                                     }
                                     val input = it.getInputStream()

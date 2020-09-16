@@ -15,6 +15,7 @@ class ReadyPlayer42Launcher: App(FrameView::class) {
         super.stop()
     }
 
+
     companion object {
         const val TITLE: String = "The best game you've ever seen"
     }
