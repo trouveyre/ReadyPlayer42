@@ -122,7 +122,7 @@ object ServerLobby : Lobby {
                     flush()
                 }
             }
-            close()
+            observer?.onLaunch(close())
         }
     }
 }
