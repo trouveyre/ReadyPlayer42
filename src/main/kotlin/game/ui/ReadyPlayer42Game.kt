@@ -1,6 +1,7 @@
 package game.ui
 
 import com.jme3.app.SimpleApplication
+import com.jme3.input.KeyInput
 import core.character.Character
 import core.game.Game
 import core.game.LocalGame
@@ -39,12 +40,14 @@ class ReadyPlayer42Game(private val game: Game) : SimpleApplication(InGameAppSta
 
 fun main(vararg args: String) {
 
-    ReadyPlayer42Game(LocalGame(
-        RandomMap(setOf(Chunk.load(args[0]), ChunkCollection.OnePlatformChunk.chunk)),
+    val map = RandomMap(ChunkCollection.values().map { it.chunk })
+    val game = LocalGame(
+        map,
         setOf(
             LocalPlayer(PlayerData.ManufacturedNames.random(), Character()),
-            LocalPlayer(PlayerData.ManufacturedNames.random(), Character())
-        ),
-        FirstScoreWinRule(args[1].toInt())
-    )).start()
+            LocalPlayer(PlayerData.ManufacturedNames.random(), Character(),
+                KeyInput.KEY_RIGHT, KeyInput.KEY_LEFT, KeyInput.KEY_UP, KeyInput.KEY_DOWN)
+        )
+    )
+    ReadyPlayer42Game(game).start()
 }

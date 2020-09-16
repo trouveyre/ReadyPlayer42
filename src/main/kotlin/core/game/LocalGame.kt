@@ -1,6 +1,8 @@
 package core.game
 
 import core.character.Character
+import core.character.CharacterData
+import core.character.Move
 import core.history.Chronicle
 import core.history.GameHistory
 import core.history.History
@@ -86,7 +88,9 @@ class LocalGame(
 
     override fun nextChronicle(elapsedTime: Double): History? {
         playersRunning.apply {
-            filterIsInstance<Player>().forEach { it.react(elapsedTime) }
+            filterIsInstance<Player>().forEach {
+                it.react(elapsedTime)
+            }
             filter { it.character.x > chronicle.chunk.length }.forEach { chronicle.newArrival(it) }
         }
         world.update(elapsedTime)

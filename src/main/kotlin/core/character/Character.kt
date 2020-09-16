@@ -1,9 +1,14 @@
 package core.character
 
+import org.dyn4j.collision.CollisionBody
+import org.dyn4j.collision.narrowphase.NarrowphaseDetector
 import org.dyn4j.dynamics.Body
 import org.dyn4j.geometry.Geometry
 import org.dyn4j.geometry.MassType
 import org.dyn4j.geometry.Vector2
+import org.dyn4j.world.CollisionData
+import org.dyn4j.world.CollisionWorld
+import org.dyn4j.world.World
 
 
 class Character : Body(), CharacterData {
@@ -20,13 +25,11 @@ class Character : Body(), CharacterData {
             translate(0.0, value - worldCenter.y)
         }
 
-    private var wantToJump: Boolean = false
+    private var _action: Move = Move.None
         set(value) {
-            if (value) applyImpulse(CharacterData.JUMP_DEFAULT_FORCE)
+            println("$this $value")
             field = value
         }
-
-    private var _action: Move = Move.None
     override val action: Move
         get() = _action
 
@@ -46,7 +49,14 @@ class Character : Body(), CharacterData {
         }
 
     override var speed: Double = CharacterData.SPEED_DEFAULT_VALUE
-    override var jumpStrength: Double = 0.0
+
+    private var wantToJump: Boolean = false
+        set(value) {
+            if (value) {
+                applyImpulse(CharacterData.JUMP_DEFAULT_FORCE)
+            }
+            field = value
+        }
 
 
     init {
@@ -74,7 +84,7 @@ class Character : Body(), CharacterData {
         }
     }
 
-    fun newAction(move: Move, stopDoing: Boolean) {
+    fun newAction(move: Move, stopDoing: Boolean = false) {
         when (move) {
             Move.Run -> {
                 when (orientation) {
@@ -94,17 +104,22 @@ class Character : Body(), CharacterData {
             Move.None -> stopRunning()
         }
         if (action != Move.Jump)
-            _action = move
-    }
-
-    fun land() {
-        _action = if (isRunningLeft || isRunningRight) Move.Run else Move.None
-        speed = CharacterData.SPEED_DEFAULT_VALUE
+            if (stopDoing && action == move && action != Move.None)
+                _action = Move.None
+            else if (!stopDoing)
+                _action = move
     }
 
     private fun stopRunning() {
         isRunningRight = false
         isRunningLeft = false
+    }
+
+    fun land() {
+        if (action == Move.Jump) {
+            _action = if (isRunningLeft || isRunningRight) Move.Run else Move.None
+            speed = CharacterData.SPEED_DEFAULT_VALUE
+        }
     }
 
     override fun toString(): String {
