@@ -50,11 +50,13 @@ data class Chunk(
                     }
                     if (char != FILE_SYMBOL_PLATFORM) {
                         if (platformStart != null) {
-                            platforms.add(StaticPlatform(
-                                (platformStart + cursorX / 2.0) * UNIT_PER_CHARACTER,
-                                numberOfLines * UNIT_PER_CHARACTER,
-                                (cursorX - platformStart) * UNIT_PER_CHARACTER
-                            ))
+                            val p = StaticPlatform(
+                                    (platformStart + cursorX / 2.0) * UNIT_PER_CHARACTER,
+                                    numberOfLines * UNIT_PER_CHARACTER,
+                                    (cursorX - platformStart) * UNIT_PER_CHARACTER
+                            )
+                            println(p)
+                            platforms.add(p)
                             platformStart = null
                         }
                     }
@@ -62,11 +64,13 @@ data class Chunk(
                     char = line.getOrNull(cursorX)
                 }
                 if (platformStart != null) {
-                    platforms.add(StaticPlatform(
-                        (platformStart + cursorX / 2.0) * UNIT_PER_CHARACTER,
-                        numberOfLines * UNIT_PER_CHARACTER,
-                        (cursorX - platformStart) * UNIT_PER_CHARACTER
-                    ))
+                    val p = StaticPlatform(
+                            (platformStart + cursorX / 2.0) * UNIT_PER_CHARACTER,
+                            numberOfLines * UNIT_PER_CHARACTER,
+                            (cursorX - platformStart) * UNIT_PER_CHARACTER
+                    )
+                    println(p)
+                    platforms.add(p)
                     platformStart = null
                 }
                 cursorX = 0

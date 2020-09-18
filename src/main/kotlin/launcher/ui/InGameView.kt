@@ -4,7 +4,7 @@ import core.game.Game
 import javafx.geometry.Pos
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
-import launcher.playFullscreen
+import game.playFullscreen
 import tornadofx.View
 import tornadofx.label
 import tornadofx.vbox

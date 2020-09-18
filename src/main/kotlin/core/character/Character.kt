@@ -26,10 +26,6 @@ class Character : Body(), CharacterData {
         }
 
     private var _action: Move = Move.None
-        set(value) {
-            println("$this $value")
-            field = value
-        }
     override val action: Move
         get() = _action
 

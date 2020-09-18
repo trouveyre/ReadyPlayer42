@@ -20,6 +20,6 @@ interface Game {
 
 
     companion object {
-        val GRAVITY: Vector2 = Vector2(0.0, -100.0)
+        val GRAVITY: Vector2 = Vector2(0.0, -120.0)
     }
 }

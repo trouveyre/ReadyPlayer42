@@ -3,6 +3,7 @@ package launcher.ui
 import com.jme3.input.KeyInput
 import core.character.Character
 import core.game.LocalGame
+import core.map.Chunk
 import core.map.ChunkCollection
 import core.map.RandomMap
 import core.player.LocalPlayer
@@ -90,6 +91,7 @@ class MenuView : View() {
         label(" or ")
         button("PLAY AT 2 ON THE SAME KEYBOARD") {
             action {
+//                val map = RandomMap(setOf(Chunk.load("D:\\Programs\\IntelliJ\\ReadyPlayer42\\src\\main\\resources\\Chunks\\Map_01.txt"), ChunkCollection.OnePlatformChunk.chunk))
                 val map = RandomMap(ChunkCollection.values().map { it.chunk })
                 val game = LocalGame(
                     map,

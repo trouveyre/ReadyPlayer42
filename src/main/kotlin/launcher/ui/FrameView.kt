@@ -3,9 +3,14 @@ package launcher.ui
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
+import javafx.scene.image.Image
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundImage
+import javafx.scene.layout.BackgroundRepeat
 import javafx.stage.StageStyle
 import launcher.ReadyPlayer42Launcher
 import tornadofx.*
+import java.net.URI
 
 class FrameView : View(ReadyPlayer42Launcher.TITLE) {
 
@@ -23,6 +28,8 @@ class FrameView : View(ReadyPlayer42Launcher.TITLE) {
         }
 
     override val root = borderpane {
+//        val back = Image("D:\\Programs\\IntelliJ\\ReadyPlayer42\\src\\main\\resources\\Backgrounds\\launcher.png")
+//        background = Background(BackgroundImage(back, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, ))
         top = hbox {
             alignment = Pos.CENTER
             add(_tip)
