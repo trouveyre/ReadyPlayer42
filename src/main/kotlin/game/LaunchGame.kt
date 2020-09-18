@@ -16,7 +16,7 @@ import java.awt.Toolkit
 
 fun playFullscreen(game: Game) {
     val app = ReadyPlayer42Game(game).apply {
-        isShowSettings = false
+        isShowSettings = true
         setSettings(AppSettings(true).apply {
             isFullscreen = true
             val size = Toolkit.getDefaultToolkit().screenSize
